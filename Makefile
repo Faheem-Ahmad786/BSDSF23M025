@@ -1,17 +1,29 @@
-# Compiler
 CC = gcc
+CFLAGS = -Iinclude -Wall
 
-# Final program name
-TARGET = bin/client
+SRC = src/main.c
+OBJ = obj/mystrfunctions.o obj/myfilefunctions.o
+LIB = lib/libmyutils.a
+TARGET = bin/client_static
 
-# Step 1: Build everything
+# Default rule
 all: $(TARGET)
 
-# Step 2: Link all source files into final program
-$(TARGET):
-	$(CC) -Iinclude -Wall src/main.c src/mystrfunctions.c src/myfilefunctions.c -o $(TARGET)
+# Step 1: Build the static library
+$(LIB): obj/mystrfunctions.o obj/myfilefunctions.o
+	ar rcs $(LIB) obj/mystrfunctions.o obj/myfilefunctions.o
 
-# Step 3: Clean build files
+# Step 2: Build the object files
+obj/mystrfunctions.o: src/mystrfunctions.c
+	$(CC) $(CFLAGS) -c src/mystrfunctions.c -o obj/mystrfunctions.o
+
+obj/myfilefunctions.o: src/myfilefunctions.c
+	$(CC) $(CFLAGS) -c src/myfilefunctions.c -o obj/myfilefunctions.o
+
+# Step 3: Link main with the static library
+$(TARGET): $(SRC) $(LIB)
+	$(CC) $(CFLAGS) $(SRC) -Llib -lmyutils -o $(TARGET)
+
 clean:
-	rm -f $(TARGET)
+	rm -f obj/*.o $(LIB) $(TARGET)
 
