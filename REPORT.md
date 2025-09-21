@@ -64,6 +64,7 @@
 - By adding your `lib/` folder to `LD_LIBRARY_PATH`, the program runs successfully.  
 
 ---
+<<<<<<< HEAD
 
 ## Feature-5: Creating and Accessing Man Pages
 
@@ -126,4 +127,6 @@
 9. How can a user build and install your project from the tarball?  
 
 ---
+=======
+>>>>>>> d7c103b (Added REPORT.md with answers for Feature-1 to Feature-4)
 
