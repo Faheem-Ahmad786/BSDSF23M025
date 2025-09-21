@@ -39,3 +39,12 @@ $(DYNAMIC_TARGET): $(SRC) $(DYNAMIC_LIB)
 clean:
 	rm -f obj/*.o lib/*.a lib/*.so bin/*
 
+install: $(STATIC_TARGET) $(DYNAMIC_TARGET)
+	# Copy executables to /usr/local/bin
+	sudo cp bin/client_static /usr/local/bin/client
+	sudo cp bin/client_dynamic /usr/local/bin/client_dynamic
+
+	# Copy man page to system man directory
+	sudo cp man/man3/client.1 /usr/share/man/man1/
+	sudo gzip /usr/share/man/man1/client.1
+
