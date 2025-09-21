@@ -1,29 +1,41 @@
 CC = gcc
 CFLAGS = -Iinclude -Wall
-
 SRC = src/main.c
 OBJ = obj/mystrfunctions.o obj/myfilefunctions.o
-LIB = lib/libmyutils.a
-TARGET = bin/client_static
 
-# Default rule
-all: $(TARGET)
+# Libraries
+STATIC_LIB = lib/libmyutils.a
+DYNAMIC_LIB = lib/libmyutils.so
 
-# Step 1: Build the static library
-$(LIB): obj/mystrfunctions.o obj/myfilefunctions.o
-	ar rcs $(LIB) obj/mystrfunctions.o obj/myfilefunctions.o
+# Executables
+STATIC_TARGET = bin/client_static
+DYNAMIC_TARGET = bin/client_dynamic
 
-# Step 2: Build the object files
+all: $(STATIC_TARGET) $(DYNAMIC_TARGET)
+
+# --- Build static library ---
+$(STATIC_LIB): obj/mystrfunctions.o obj/myfilefunctions.o
+	ar rcs $(STATIC_LIB) $^
+
+# --- Build dynamic library ---
+$(DYNAMIC_LIB): obj/mystrfunctions.o obj/myfilefunctions.o
+	$(CC) -shared -o $(DYNAMIC_LIB) $^
+
+# --- Build object files with -fPIC (for dynamic) ---
 obj/mystrfunctions.o: src/mystrfunctions.c
-	$(CC) $(CFLAGS) -c src/mystrfunctions.c -o obj/mystrfunctions.o
+	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 obj/myfilefunctions.o: src/myfilefunctions.c
-	$(CC) $(CFLAGS) -c src/myfilefunctions.c -o obj/myfilefunctions.o
+	$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
-# Step 3: Link main with the static library
-$(TARGET): $(SRC) $(LIB)
-	$(CC) $(CFLAGS) $(SRC) -Llib -lmyutils -o $(TARGET)
+# --- Link static executable ---
+$(STATIC_TARGET): $(SRC) $(STATIC_LIB)
+	$(CC) $(CFLAGS) $(SRC) -Llib -lmyutils -o $@
+
+# --- Link dynamic executable ---
+$(DYNAMIC_TARGET): $(SRC) $(DYNAMIC_LIB)
+	$(CC) $(CFLAGS) $(SRC) -Llib -lmyutils -o $@
 
 clean:
-	rm -f obj/*.o $(LIB) $(TARGET)
+	rm -f obj/*.o lib/*.a lib/*.so bin/*
 
