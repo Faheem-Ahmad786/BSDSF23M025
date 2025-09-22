@@ -48,3 +48,7 @@ install: $(STATIC_TARGET) $(DYNAMIC_TARGET)
 	sudo cp man/man3/client.1 /usr/share/man/man1/
 	sudo gzip /usr/share/man/man1/client.1
 
+dist:
+	# Create a compressed tarball of the project
+	tar -czvf BSDSF23M025-OS-A01.tar.gz src include lib obj bin man Makefile REPORT.md
+
